@@ -3,7 +3,6 @@
     <head>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk3os9VYHYnphNfh0ev1o3kFbTCCddCyE&callback=initMap"
         async defer></script>
-        <link rel="stylesheet" type="text/css" href="http://typecast.com/images/uploads/modernscale.css">
         <style rel="stylesheet" type="text/css">
             #map, body, html {
                 height: 100%;
@@ -23,30 +22,81 @@
                 background-color: #fff;
                 padding: 0px 50px 0px 50px;
             }
+            
+            #focus {
+                display: block;
+                position: absolute;
+                height: 40px;
+                width: 40px;
+                bottom: 74px;
+                right: 10px;
+                border: 0px;
+                padding: 0px;
+                background-color: #fff;
+                cursor: pointer;
+            }
 
+            #focus:hover #focus-img{
+                transform: translate(0, 7px);
+            }
+
+            #focus-img {
+                height: 30px;
+            }
+
+            p {
+                font-size: 16px;
+            }
             h1 {
+                font-size: 30px;
                 text-align: center;
             }
-            
         </style>
     </head>
     <body>
-            <div id="info">
-                <h1>I'm the header</h1>
-                <p1>I'm the content</p1>
-                <br>
-                <button onclick="closeInfo()">close</button>
-            </div>
+        <div id="info">
+            <h1>I'm the header</h1>
+            <p>I'm the content</p>
+            <br>
+            <button onclick="closeInfo()">close</button>
+        </div>
+
         <div id="map"></div>
+
+        <button id="focus" onclick="focus()">
+            <img id="focus-img" src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png">
+        </button>
         
         <script>
             var map;
+            document.getElementById("focus").addEventListener("click", focus);
+            function focus() {
+                if (navigator.geolocation) {                    
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        var pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        map.setZoom(18);
+        	            map.panTo(pos);
+
+                    }, () => {
+                        handleLocationError(true, map.getCenter());
+                    });
+                }
+            }
+
             function closeInfo() {
                 document.getElementById('info').style.display = 'none';
                 document.getElementById('map').style.display = 'block';
+                document.getElementById('focus').style.display = 'block';
             }
+
             function initMap() {
-                map = new google.maps.Map(document.getElementById('map'));                
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoomControl: false
+                });                
                 var geocoder = new google.maps.Geocoder();
 
                 geocoder.geocode( {'address' : "Estonia"}, (results, status) => {
@@ -77,17 +127,16 @@
                         marker.addListener('click', () => {
                             document.getElementById("info").style.display = "block";                           
                             document.getElementById("map").style.display = "none";
+                            document.getElementById("focus").style.display = "none";
                         });
+                        
                     }, () => {
                         handleLocationError(true, map.getCenter());
                     });
                 } else {
                 handleLocationError(false, map.getCenter());
                 }
-                });               
-                
-                
-
+                });  
 
                 function handleLocationError(browserHasGeolocation, pos) {
                     var infoWindow = new google.maps.InfoWindow();
