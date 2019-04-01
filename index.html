@@ -29,7 +29,6 @@
                     }
                 });               
                 
-                var infoWindow = new google.maps.InfoWindow();
                 if (navigator.geolocation) {                    
                     navigator.geolocation.getCurrentPosition((position) => {
                         var pos = {
@@ -47,14 +46,16 @@
         	            map.panTo(marker.position);
                         map.setCenter(pos);
                     }, () => {
-                        handleLocationError(true, infoWindow, map.getCenter());
+                        handleLocationError(true, map.getCenter());
                     });
                 } else {
-                handleLocationError(false, infoWindow, map.getCenter());
+                handleLocationError(false, map.getCenter());
                 }
 
 
-                function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+                function handleLocationError(browserHasGeolocation, pos) {
+                    var infoWindow = new google.maps.InfoWindow();
+
                     infoWindow.setPosition(pos);
                     infoWindow.setContent(browserHasGeolocation ?
                                         'Error: The Geolocation service failed.' :
