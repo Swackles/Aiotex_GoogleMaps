@@ -49,7 +49,7 @@
                         marker.addListener('click', () => {
                             var infoWindow = new google.maps.InfoWindow();
                             infoWindow.setPosition(marker.getPosition());
-                            infoWindow.setContent("<h1>I'm the header</h1><br><p>content</p>");
+                            infoWindow.setContent("<h1>I'm the header</h1><br><h3>content</h3>");
                             infoWindow.open(map);
                         });
                     }, () => {
